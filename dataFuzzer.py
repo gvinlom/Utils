@@ -2,67 +2,57 @@ import random as rd
 import string
 
 
-def fuzz(
-    txt,
-    insert_str=False,
-    insert_num=False,
-    insert_float=False,
-    insert_space_chars=False,
-    append_space_char=False,
-    delete_chars=False,
-    replace_none=False,
-):
+def fuzz(txt, action=None, k=5):
     """
     input text will be randomly modified according to the specified options
     if no options are selected one will be picked for you
     """
     opts = [
-        insert_str,
-        insert_num,
-        insert_float,
-        insert_space_chars,
-        append_space_char,
-        delete_chars,
-        replace_none,
+        "insert_str",
+        "insert_num",
+        "insert_float",
+        "insert_space_chars",
+        "append_space_char",
+        "delete_chars",
+        "replace_none",
     ]
-    action = None
-    if not any(opts):
-        action = rd.randrange(0, len(opts))
+    if action == None:
+        action = rd.choice(opts)
 
     # index location to perform action
     i = rd.randint(0, len(txt))
 
-    if insert_str or action == 0:
+    if action == "insert_str":
         letters = string.ascii_lowercase
-        s = "".join(rd.choices(letters, k=5))
+        s = "".join(rd.choices(letters, k=k))
         res = txt[:i] + s + txt[i:]
 
-    elif insert_num or action == 1:
-        s = rd.randint(0, 10)
-        res = txt[:i] + str(s) + txt[i:]
+    elif action == "insert_num":
+        s = "".join(rd.choices(string.digits, k=k))
+        res = txt[:i] + s + txt[i:]
 
-    elif insert_float or action == 2:
+    elif action == "insert_float":
         s = rd.random() + 1
         res = txt[:i] + str(s) + txt[i:]
 
-    elif insert_space_chars or action == 3:
+    elif action == "insert_space_chars":
         s = rd.choice(["\t", "\n", "\r", " "])
         res = txt[:i] + s + txt[i:]
 
-    elif append_space_char or action == 4:
+    elif action == "append_space_char":
         s = rd.choice(["\t", "\n", "\r", " "])
         res = txt + s
 
-    elif delete_chars or action == 5:
+    elif action == "delete_chars":
         # randomize end of range
         u = rd.randint(i + 1, len(txt))
         res = txt[:i] + "" + txt[u:]
 
-    elif replace_none or action == 6:
+    elif action == "replace_none":
         # ~20% chance to be replaced with none
         if rd.randint(1, 5) == 3:
             s = rd.choice(["", None, " "])
-            res = txt + s
+            res = s
         else:
             res = txt
 
